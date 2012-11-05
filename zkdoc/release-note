@@ -1,0 +1,6 @@
+	--------
+flashchart 1.0
+* Features:
+* Bugs:
+	Fixed YUI2 security issue - http://www.yuiblog.com/blog/2012/10/30/security-announcement-swf-vulnerability-in-yui-2/
+* Upgrade Notes:

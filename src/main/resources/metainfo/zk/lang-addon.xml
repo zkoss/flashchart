@@ -1,0 +1,20 @@
+<language-addon>
+    <addon-name>flashchart</addon-name>
+	<depends>zul</depends>
+  	<version>
+		<version-class>org.zkoss.flashchart.Version</version-class>
+		<version-uid>1.0</version-uid>
+		<zk-version>5.0.10</zk-version><!-- or later -->
+	</version>
+    
+	<language-name>xul/html</language-name>
+	<component>
+		<component-name>flashchart</component-name>
+		<component-class>org.zkoss.zul.Flashchart</component-class>
+		<widget-class>zul.fchart2.Flashchart</widget-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/flashchart.js</mold-uri>
+		</mold>
+	</component>
+</language-addon>
