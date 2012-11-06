@@ -8,3 +8,11 @@ and only fixes the YUI2's security issue which is announced in [YUI blog](http:/
 
 ## License
  * [LGPL](http://www.gnu.org/licenses/lgpl-2.1.html)
+
+## Maven dependency
+
+	<dependency>
+		<groupId>org.zkoss.addon</groupId>
+		<artifactId>flashchart</artifactId>
+		<version>1.0</version>
+	</dependency>
