@@ -3,8 +3,8 @@
 	<depends>zul</depends>
   	<version>
 		<version-class>org.zkoss.flashchart.Version</version-class>
-		<version-uid>1.0</version-uid>
-		<zk-version>5.0.10</zk-version><!-- or later -->
+		<version-uid>1.0.1-SNAPSHOT</version-uid>
+		<zk-version>5.0.11</zk-version><!-- or later -->
 	</version>
     
 	<language-name>xul/html</language-name>
