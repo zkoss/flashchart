@@ -1,4 +1,9 @@
 	--------
+flashchart 1.0.1
+* Features:
+* Bugs:
+	ZK-2161: JS error when modify the model of Flashchart in another tab
+	--------
 flashchart 1.0
 * Features:
 * Bugs:

@@ -123,40 +123,53 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	}
 	
 	/* If e.type == swfReady, then init chart data. */
-	function onFlashEvent(wgt, event) {
+	function onFlashEvent(wgt, event, refresh) {
 		var swf = wgt.$n('chart'),
 			type = wgt._type,
 			chartStyle = wgt._chartStyle,
 			data = jq.evalJSON(wgt._jsonModel),
 			series = (type == 'pie') ? false : jq.evalJSON(wgt._jsonSeries),
 			dataProvider = seriesProvider(series, type, data);
-		
-		swf.setType(type);
-		swf.setStyles(formatToJSON(chartStyle || wgt._defaultStyle));
-		
-		if (type == "pie") {
-			swf.setCategoryField("categoryField");
-			swf.setDataField("dataField");
+		if (!refresh) {
+			swf.setType(type);
+			swf.setStyles(formatToJSON(chartStyle || wgt._defaultStyle));
 			
-		} else if (type == "bar" || type == "stackbar") {
-			swf.setHorizontalAxis(_axis);
-			swf.setVerticalField("values");
-			
-		} else {
-			swf.setVerticalAxis(_axis);
-			swf.setHorizontalField("values");
-			
+			if (type == "pie") {
+				swf.setCategoryField("categoryField");
+				swf.setDataField("dataField");
+				
+			} else if (type == "bar" || type == "stackbar") {
+				swf.setHorizontalAxis(_axis);
+				swf.setVerticalField("values");
+				
+			} else {
+				swf.setVerticalAxis(_axis);
+				swf.setHorizontalField("values");
+			}
 		}
 		swf.setDataProvider(dataProvider);
 	}
 	
 	/* Refresh the data of chart */
 	function refresh(wgt, dataModel) {
-		var type = wgt._type,
-			data = jq.evalJSON(dataModel),
-			series = (type == 'pie') ? false : jq.evalJSON(wgt._jsonSeries),
-			dataProvider = seriesProvider(series, type, data);
-		wgt.$n('chart').setDataProvider(dataProvider);
+		var chart = wgt.$n('chart');
+		
+		/**
+		 * ZK-2161: 
+		 * this is flashchart bug, cann't setDataProvider if chart is invisible. 
+		 * need to refresh chart when chart showed
+		 * ref: http://www.sencha.com/forum/archive/index.php/t-91462.html
+		 */  
+		if (jq(chart).is(':visible')) {
+			var type = wgt._type,
+				data = jq.evalJSON(dataModel),
+				series = (type == 'pie') ? false : jq.evalJSON(wgt._jsonSeries),
+				dataProvider = seriesProvider(series, type, data);
+			chart.setDataProvider(dataProvider);
+		} else {
+			wgt._jsonModel = dataModel;
+			this._shallRefresh = true;
+		}
 	}
 	
 	function seriesProvider(series, type, data) {
@@ -250,6 +263,12 @@ zul.fchart2.Flashchart = zk.$extends(zul.med.Flash, {
 	setRefresh: function (mod) {
 		refresh(this, mod);
 	},
+	onShow: function() {
+		if (this._shallRefresh) {
+			onFlashEvent(this, null, true);
+			this._shallRefresh = false;
+		}
+	},	
 	bind_: function (desktop, skipper, after) {
 		this.$supers(Flashchart, 'bind_', arguments);
 		var _swfId = this.uuid + "-chart",
@@ -270,9 +289,13 @@ zul.fchart2.Flashchart = zk.$extends(zul.med.Flash, {
 				"9.0.0", _expressInstall, false, _params, _attributes);
 		
 		_caches[_swfId] = 'yuigen' + yuigen++;
+		
+		zWatch.listen({onShow: this});
 	},
 	unbind_: function () {
 		delete _caches[this.uuid + '-chart'];
+		
+		zWatch.unlisten({onShow: this});
 		this.$supers(Flashchart, 'unbind_', arguments);
 	}
 	
